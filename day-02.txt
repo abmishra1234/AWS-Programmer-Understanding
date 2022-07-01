@@ -61,5 +61,4 @@ remove_bucket: abi-demo-bucket-01
 delete: s3://abi-demo-bucket-02/demofile.txt
 remove_bucket: abi-demo-bucket-02
 [cloudshell-user@ip-10-0-70-238 ~]$ 
-
-#######################################
+##############Day-02 completed#########################

@@ -1,0 +1,30 @@
+## Let's create and delete the bucket from AWS CLI
+# (i)command for creating bucket is : aws s3 mb s3://bucket-name --region aws_region
+# for ex: aws s3 mb s3://abinash-demo-bucket-01 --region ap-south-1
+
+# how you will check the bucket is created or not?
+# the command for listig the all bucket : aws s3 ls
+
+# the CLI command for deleting the perticular bucket
+# for ex: aws s3 rb s3://abinash-demo-bucket-02 --force
+
+
+## @note : One point to be noted here that, 
+
+######## Section 01 completed ##########
+#How to upload the object into the s3 bucket?
+## Upload an Object : aws s3 cp <source> <target> [--options]
+# for ex : aws s3 cp demofile.txt s3://abinash-demo-bucket-01
+## another example could be :  aws s3 cp srcdir s3://abinash-demo-bucket-01 --recursive
+
+################
+ 
+Using low-level S3 api PutObject command:
+Syntax:
+
+aws s3api put-object [-- options]
+Example:
+aws s3api put-object --bucket my-pets --key mountain-bernese.jpg --body mountain-bernese.jpg
+Here, --bucket specifies the bucket name, --key specifies the object key, and --body specifies the object data.
+
+#######Section 02 is completed ########

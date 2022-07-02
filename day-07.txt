@@ -1,0 +1,60 @@
+Server Access Logging
+Understand how access logs can be managed using S3 server access logging.
+
+What’s server access logging?
+Server access logging in AWS S3 helps keep a record of the access made to a bucket and its objects.
+
+An access request can be made by a user or an AWS service. Using server access logs, 
+these access requests are stored in the form of log files, which can be analyzed whenever required.
+
+Access logs contain information about the requester, bucket name, request time, request ID, 
+operation, requester IP, response status, error code, and so on.
+
+Server access logging is disabled by default, and logs are written inside a bucket. 
+This bucket must be created before we enable server access logs for any bucket. 
+It’s recommended to create a separate dedicated bucket for logging purposes.
+
+
+Enable server access logging using the AWS console
+ We do this in the following way:
+
+Select the bucket for which server access logs need to be enabled.
+Go to “Properties” and edit “Server access logging.”
+Choose “Enable” and specify the target bucket to store the access logs.
+Click on “Save changes.”
+
+
+Access logs are delivered by the S3 log delivery group. 
+When we enable server access logging, S3 automatically updates the bucket policy to 
+allow write access to the log delivery group.
+
+@Note- ####
+Server access log delivery takes some time. We’ll be able to see logs in our target bucket 
+after a few hours. If static web hosting is enabled for the source bucket, website access logs 
+will also be delivered to the target bucket.
+
+
+//-------------------------------
+
+Object-specific constraints#
+If the object size is smaller than 128 KB, AWS S3 won’t transition that object between the following storage classes:
+
+Transition from S3 Standard to S3 Standard-IA, S3 One Zone-IA, S3 Intelligent-Tiering, or S3 Glacier is 
+not supported.
+
+Transition from S3 Standard-IA to S3 Intelligent-Tiering or S3 Glacier is not supported.
+Objects must be stored for at least 30 days in S3 Standard before they can be transitioned to 
+S3 Standard-IA or S3 One Zone-IA.
+
+//--------------------
+
+Expiring objects#
+Another feature that lifecycle rules provide is the automatic expiration of objects after a certain specified time period.
+
+For example, we configured a bucket to store server access logs in the last lesson. 
+These log objects can grow large in size based on the access patterns. Depending upon the 
+requirement, we might need to retain the access logs of only 30 or more days. In such a case, 
+we can configure an automatic expiration of objects after 30 or more days using the expiration 
+lifecycle rule.
+
+//-----------day-07 completed--------------------

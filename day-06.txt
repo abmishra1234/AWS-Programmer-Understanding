@@ -1,0 +1,52 @@
+Enable Static Web Hosting
+
+Enable static web hosting using the AWS CLI
+To enable static web hosting using the AWS CLI, the website subcommand can be used.
+
+Syntax:
+aws s3 website <target> [--options]
+
+Example:
+[cloudshell-user@ip-10-0-34-29 ~]$ aws s3 cp index.html s3://abi-demo-bucket-01
+upload: ./index.html to s3://abi-demo-bucket-01/index.html        
+[cloudshell-user@ip-10-0-34-29 ~]$ 
+[cloudshell-user@ip-10-0-34-29 ~]$ aws s3 website s3://abi-demo-bucket-01 --index-document index.html
+
+Here, s3://abi-demo-bucket-01 is the target S3 bucket URI, and --index-document is the required parameter. 
+This parameter needs an HTML file stored in the bucket as a value that has to be hosted as a 
+static website.
+
+Just verify using the bucket uri from accessing on public through browser.
+
+//--------------------------
+
+Static Website Configuration Using the AWS CLI
+Learn to set up static website configuration using the AWS CLI
+
+[cloudshell-user@ip-10-0-179-239 ~]$ aws s3 cp index.html s3://abi-demo-bucket-01
+upload: ./index.html to s3://abi-demo-bucket-01/index.html  
+
+Now, let’s try to access the website endpoint. We should now be able to access the website:
+[cloudshell-user@ip-10-0-179-239 ~]$ curl https://abi-demo-bucket-01.s3.ap-south-1.amazonaws.com/index.html
+<!doctype html>
+<html>
+          <head>
+                      <title>This is the title of the webpage!</title>
+                        </head>
+                          <body>
+                                      <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
+                                        </body>
+</html>
+[cloudshell-user@ip-10-0-179-239 ~]$ 
+
+//-----------------------------------
+
+Custom Error Document Configuration
+Learn how to configure custom error pages.
+
+Configure an error page using the AWS CLI
+
+Example:
+aws s3 website s3://my-pets/ --index-document index.html --error-document error.html
+
+//-----------day-06 completed--------------------

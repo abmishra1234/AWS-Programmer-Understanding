@@ -1,0 +1,153 @@
+List buckets and objects
+Syntax:
+aws s3 ls <target> [--options]
+
+Example 1:
+This example lists all existing S3 buckets with their creation date and timestamp.
+
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls
+2022-07-02 01:33:55 abi-demo-bucket-01
+
+##---------------
+Example 2: How to list down the objects inside the perticular bucket
+
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 cp ./ s3://abi-demo-bucket-01 --recursive
+upload: ./.zshrc to s3://abi-demo-bucket-01/.zshrc               
+upload: ./.bash_history to s3://abi-demo-bucket-01/.bash_history
+upload: ./.viminfo to s3://abi-demo-bucket-01/.viminfo         
+upload: ./.bash_profile to s3://abi-demo-bucket-01/.bash_profile
+upload: ./.bashrc to s3://abi-demo-bucket-01/.bashrc           
+upload: .config/powershell/Microsoft.PowerShell_profile.ps1 to s3://abi-demo-bucket-01/.config/powershell/Microsoft.PowerShell_profile.ps1
+upload: ./demo2.txt to s3://abi-demo-bucket-01/demo2.txt       
+upload: ./demo1.txt to s3://abi-demo-bucket-01/demo1.txt       
+upload: ./demofile.txt to s3://abi-demo-bucket-01/demofile.txt 
+upload: ./.bash_logout to s3://abi-demo-bucket-01/.bash_logout 
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01
+                           PRE .config/
+2022-07-02 01:38:01        626 .bash_history
+2022-07-02 01:38:01         18 .bash_logout
+2022-07-02 01:38:01        193 .bash_profile
+2022-07-02 01:38:01        314 .bashrc
+2022-07-02 01:38:01       2974 .viminfo
+2022-07-02 01:38:01        777 .zshrc
+2022-07-02 01:38:01          6 demo1.txt
+2022-07-02 01:38:01         11 demo2.txt
+2022-07-02 01:38:01         34 demofile.txt
+
+//----------------------------
+
+Example 3:
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 mb s3://abi-demo-bucket-01
+make_bucket: abi-demo-bucket-01
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 cp demo1.txt s3://abi-demo-bucket-01
+upload: ./demo1.txt to s3://abi-demo-bucket-01/demo1.txt        
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 cp demo1.txt s3://abi-demo-bucket-01/test
+upload: ./demo1.txt to s3://abi-demo-bucket-01/test             
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls
+2022-07-02 01:43:59 abi-demo-bucket-01
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01
+2022-07-02 01:45:06          6 demo1.txt
+2022-07-02 01:45:59          6 test
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01/test
+2022-07-02 01:45:59          6 test
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01/test/
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 cp demo2.txt s3://abi-demo-bucket-01/test/
+upload: ./demo2.txt to s3://abi-demo-bucket-01/test/demo2.txt     
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01/test/
+2022-07-02 01:47:51         11 demo2.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+//-----------------------------
+Example 4:
+This example lists all objects present inside a bucket and its prefixes.
+
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01 --recursive
+2022-07-02 01:45:06          6 demo1.txt
+2022-07-02 01:45:59          6 test
+2022-07-02 01:47:51         11 test/demo2.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+
+//-------------------------
+Example 1:
+To delete an empty bucket, we use the following command. 
+If the bucket is non-empty, this command results in a failed error.
+
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 rb s3://abi-demo-bucket-01
+remove_bucket failed: s3://abi-demo-bucket-01 An error occurred (BucketNotEmpty) when calling the DeleteBucket operation: The bucket you tried to delete is not empty
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+
+Example 2:
+To delete a versioning disabled bucket containing objects, we use the following command:
+
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 rb s3://abi-demo-bucket-01 --force
+delete: s3://abi-demo-bucket-01/demo1.txt
+delete: s3://abi-demo-bucket-01/test
+delete: s3://abi-demo-bucket-01/test/demo2.txt
+remove_bucket: abi-demo-bucket-01
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+
+The --force command deletes the objects first, and then the bucket delete operation is performed.
+If the bucket is versioning enabled and contains versioned objects, the command above inserts a 
+delete marker for the versioned objects. It does so in an attempt to delete the objects, 
+and it results in a failed error on the bucket delete attempt.
+
+To delete such a bucket, we must empty the bucket first.
+
+//--------------------------
+
+Sync buckets
+We can use the sync subcommand to sync the source’s contents and target.
+Here, the source and target can be one of the following:
+(i)LocalPath and S3URI
+(ii)S3URI and LocalPath
+(iii)S3URI and S3URI
+
+These are all possible combinations
+
+Syntax:
+aws s3 sync <source> <target> [--options]
+
+Example 1:
+
+The following command syncs the contents of the local directory /test with the s3 bucket and uploads 
+the contents if they are not present in remote bucket
+
+[cloudshell-user@ip-10-0-90-72 ~]$ ll
+total 12
+-rw-rw-r-- 1 cloudshell-user cloudshell-user   11 Jul  1 17:33 demo2.txt
+-rw-rw-r-- 1 cloudshell-user cloudshell-user   34 Jul  1 17:33 demofile.txt
+drwxrwxr-x 2 cloudshell-user cloudshell-user 4096 Jul  2 02:15 test
+[cloudshell-user@ip-10-0-90-72 ~]$ ls /test/
+ls: cannot access /test/: No such file or directory
+[cloudshell-user@ip-10-0-90-72 ~]$ ls test
+demo1.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 sync ./test s3://abi-demo-bucket-01/test
+fatal error: An error occurred (NoSuchBucket) when calling the ListObjectsV2 operation: The specified bucket does not exist
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 mb s3://abi-demo-bucket-01
+make_bucket: abi-demo-bucket-01
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 sync ./test s3://abi-demo-bucket-01/test
+upload: test/demo1.txt to s3://abi-demo-bucket-01/test/demo1.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01/test/
+2022-07-02 02:19:05          6 demo1.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ ll 
+total 12
+-rw-rw-r-- 1 cloudshell-user cloudshell-user   11 Jul  1 17:33 demo2.txt
+-rw-rw-r-- 1 cloudshell-user cloudshell-user   34 Jul  1 17:33 demofile.txt
+drwxrwxr-x 2 cloudshell-user cloudshell-user 4096 Jul  2 02:15 test
+[cloudshell-user@ip-10-0-90-72 ~]$ mv demo2.txt ./test
+[cloudshell-user@ip-10-0-90-72 ~]$ ll
+total 8
+-rw-rw-r-- 1 cloudshell-user cloudshell-user   34 Jul  1 17:33 demofile.txt
+drwxrwxr-x 2 cloudshell-user cloudshell-user 4096 Jul  2 02:20 test
+[cloudshell-user@ip-10-0-90-72 ~]$ ls ./test
+demo1.txt  demo2.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 sync ./test s3://abi-demo-bucket-01/test
+upload: test/demo2.txt to s3://abi-demo-bucket-01/test/demo2.txt  
+[cloudshell-user@ip-10-0-90-72 ~]$ aws s3 ls s3://abi-demo-bucket-01/test/
+2022-07-02 02:19:05          6 demo1.txt
+2022-07-02 02:21:10         11 demo2.txt
+[cloudshell-user@ip-10-0-90-72 ~]$ 
+
+//-------------day-03 completed now..---------------

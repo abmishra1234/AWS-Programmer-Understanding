@@ -1,0 +1,108 @@
+Manage a bucket ACL with the AWS CLI
+Command:
+aws s3api put-bucket-acl --bucket BUCKET_NAME [options] 
+Here, options include the following:
+private
+public-read
+public-read-write
+authenticated-read
+The --access-control-policy option allows the inclusion of ACL configuration in the JSON format.
+The --grant-full-control option grants permission to list and write objects and read and write bucket ACL access.
+The --grant-read option allows list-objects access.
+The --grant-read-acp option grants permission to read the bucket ACL.
+The --grant-write option grants permission to write the objects.
+The --grant-write-acp option grants permission to write the bucket ACL.
+
+Example 1:
+aws s3api put-bucket-acl --bucket my-pets --acl public-read
+
+Example 2:
+aws s3api put-bucket-acl --bucket my-pets --grant-read uri=http://acs.amazonaws.com/groups/global/AuthenticatedUsers
+
+//-------------------------------
+
+Presigned URLs
+Learn about presigned URLs in AWS S3.
+
+What’s a presigned URL?
+Suppose we want to grant temporary access to an object in an S3 bucket to someone who doesn’t have 
+an AWS account. At the same time, we don’t want to make our object public.
+How can we do that?
+
+To achieve this, we can use the feature of presigned URLs.
+This allows us to share objects or enable upload to an S3 bucket by users 
+without needing credentials or permissions.
+
+A presigned URL generates a temporary access URL that users can use to access an object or a bucket until the 
+URL reaches its expiration time and stops working.
+
+This will be predefined by you while creating a presigned URL.
+
+We can create a presigned URL using the AWS CLI or SDK (software development kit).
+
+Presigned URL for sharing an object using the AWS CLI
+
+In this example, we share an object that contains an image using a presigned URL 
+that expires after two minutes.
+
+Command:
+[cloudshell-user@ip-10-0-34-29 ~]$ aws s3 mb s3://abi-demo-bucket-01 --region ap-south-1
+make_bucket: abi-demo-bucket-01
+[cloudshell-user@ip-10-0-34-29 ~]$ aws s3 cp demo1.txt s3://abi-demo-bucket-01
+upload: ./demo1.txt to s3://abi-demo-bucket-01/demo1.txt        
+[cloudshell-user@ip-10-0-34-29 ~]$ aws s3 presign s3://abi-demo-bucket-01/demo1.txt --expires-in 120
+https://abi-demo-bucket-01.s3.ap-south-1.amazonaws.com/demo1.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIA4CF75JJK5KRNFBGH%2F20220702%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20220702T155303Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEDgaCmFwLXNvdXRoLTEiRzBFAiEA1lnMlj4El6CjQPmDlJd6RBod8Yj8shqLxul0hGS5bnYCIACdPd3WlsFhHvV2HoARA%2FHLc%2BSIYTLN18y5JtSbLWFkKooDCGEQAxoMODI5MzMxMTYzNzMzIgzpl6PwJAU40RSXHEYq5wJRCK2RLZ10KnJ7XV%2FcPXTobF42a2qy0coyVU2%2FgmViI2cAqf8f1k%2Bfn94sdIiImBO1QY1kKc7GHY3g9MEsV9VLVx3O4M1FmFoFkIvDYTQsN6wJ8q8aUliUPmeoRrX%2BdELNFEQ%2F%2BZVMdkEHsu%2FAXSo4C9Wwgzah0XUEAf2kewOeg%2BNESshwPBskI3GzwU%2BmWFFgTAkR8YYfGCH3wQvesUOjx7U%2BWmlmwd8df8bYfqeEiduX9K2hMsqfuLJoJ0%2Blx9XJTI849cuoi7lOpYvWi29VPbJpVD8LnAbRHqO4CwlLXRAszEcLY2nvRKVwDCY3I5sApdakBPEE2trmAvTwjPIXa3E%2FIqnW3vXR330PdPMclmpeQM7IUQrsE8JhrYMDOk0AvGfx9wexLCSKvsBNKj8fPThxYaU3TUr3Xj93g9zXrhVRxvtIiwsLPT5P%2BVufgaj%2FPNPLJLxys9ab6cWl%2BbuR6uSTp1HfYjD50YGWBjqzAtS0Kcbk6BC6A%2F7S9ahwb917dgMNoZQ8StKfNG9Y%2B9KiZrdccePdB0a9IywpywPaChEEJz5T5d3bx%2BST%2BafKl3iaSCiOZey6fMXT%2Fm9ZHvLC5C2rWBKmdPmNoLQsGh9UYg3rPJf3%2FGoHJqcPcYq5Lsuz5i92hiyIKwESUzqFjUpwwy2SMM%2F6f%2F0GgnK5g5nYoIF5GNK2onqOhq4rWEppJCF7RcWf8Ro3weisL4y4ZJdNmGECJ5EyCfuDGa5czwYCZ2salFmw%2BzSe3QTNNSoI4da5PPwO%2FtfSUPQn1I7K26oZ2y7Yp6%2FFUcB7Wr1W%2ByMlPVqQzjjGrP%2FA6IsxnqSLQcG6w1GQDluYoKuophBQgAev4w32jbo%2B%2Fd2GEKkGGyBJOeXxgHA7Tl268CJEwLubduryxFE%3D&X-Amz-Signature=b717576cf4bf24cced4c271cf1286eaede0ddad62e3bcab25293f60e1cce8cc4
+[cloudshell-user@ip-10-0-34-29 ~]$ 
+
+//----------------------------------
+S3 URL Breakdown
+
+Virtual hosted-style URLs
+
+In a virtual hosted-style URL the bucket name is present within the URL as a subdomain of the URL
+This allows every bucket to be present as a unique DNS subdomain in the URL.
+
+Example:
+https://abi-demo-bucket-01.s3.amazonaws.com/demo1.txt
+
+There are 03 different sub-sections of this url
+Bucket: abi-demo-bucket-01
+s3 Endpint: s3.amazonaws
+object: demo1.txt
+
+In the example above, we see that the bucket name abi-demo-bucket-01 is a subdomain 
+in the URL with the S3 endpoint s3.amazonaws.com. It also references the demo1.txt object 
+within the bucket.
+
+The same example you can see in most the google services, for ex:
+calendar.google.com, drive.google.com
+
+
+In the past, AWS S3 used path-style URLs, where the bucket name was present as a path after
+s3.amazonaws.com.
+
+Example
+https://s3.amazonaws.com/abi-demo-bucket-01/demo1.txt
+
+However, AWS S3 has deprecated the use of the path-style URL pattern 
+and now uses only the virtual hosted-style URL pattern for all the buckets.
+
+//------------------------
+
+Static website endpoint
+
+A static-hosted website is always region specific and can be accessed using the region-specific endpoint.
+
+Based on the S3 bucket region, the website endpoint will follow one of the following formats.
+
+Dash format
+In the dash format, the keyword s3-website and the region name are separated by a dash.
+Example: 
+http://abi-demo-bucket-01.s3-website-ap-south-1.amazonaws.com
+
+Dot format
+In the dot format, the keyword s3-website and the region name are separated by a dot.
+Example: 
+http://abi-demo-bucket-01.s3-website.ap-south-1.amazonaws.com
+
+//-----------day-05 completed--------------------

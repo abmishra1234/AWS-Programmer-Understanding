@@ -1,0 +1,77 @@
+Set up Bucket and Object Permissions
+Goal: Learn about several ways to allow or restrict access to a bucket and its objects.
+
+By default, AWS only allows the resource owner or the account owner access to resources. 
+This means all created resources are private by default.
+
+In case we need to provide access to the bucket to other services or users, 
+there are multiple access management features available in S3 that allow authorized access.
+
+AWS recommends following the principle of least privilege while granting permissions. 
+This means we only grant permissions that are necessary to perform any specific task instead of 
+granting full access rights.
+
+Access management features in S3
+(i) AWS IAM (Identity and Access Management)
+(ii) Bucket policies
+(ii) Access control list (ACL)
+
+Understand Bucket Policies
+Learn more about managing permissions using bucket policies.
+
+The components of a bucket policy
+An S3 bucket policy can be created in JSON. Its main components are as follows:
+
+Resources: These are AWS S3 resources to which we provide access-based permissions.
+
+Actions: We can provide permission to perform any particular action on an S3 bucket, 
+such as s3:GetObject.
+
+Effect: We can apply either the Allow or Deny effect when an action is requested on the resource.
+
+Principal: This lists the AWS user, account, service, or role to which the set of permissions is 
+being provided.
+
+Sample bucket policy
+//---------------------
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AddCannedAcl",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::829331163733:user/abmishra"
+            },
+            "Action": [
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": "arn:aws:s3:::abi-demo-bucket-01/*",
+            "Condition": {
+                "StringEquals": {
+                    "s3:x-amz-acl": "public-read"
+                }
+            }
+        }
+    ]
+}
+
+//------------------------
+
+Add a bucket policy using the AWS CLI:
+[cloudshell-user@ip-10-0-65-146 ~]$ aws s3api put-bucket-policy --bucket abi-demo-bucket-01 --policy s3-policy.json
+For Deleting the policy attached with bucket:
+[cloudshell-user@ip-10-0-65-146 ~]$ aws s3api delete-bucket-policy --bucket abi-demo-bucket-01
+
+//-------------------------------
+Another example to delete the bucket using CLI
+
+[cloudshell-user@ip-10-0-65-146 ~]$ aws s3 mb s3://abi-demo-bucket-01 --region ap-south-1
+make_bucket: abi-demo-bucket-01
+[cloudshell-user@ip-10-0-65-146 ~]$ aws s3api delete-bucket --bucket abi-demo-bucket-01
+[cloudshell-user@ip-10-0-65-146 ~]$ aws s3 ls
+[cloudshell-user@ip-10-0-65-146 ~]$ 
+
+//-----------day-04 completed--------------------
